@@ -62,7 +62,7 @@ export const MANAGER_MENU_ITEMS: MenuItem[] = [
     id: "stokbarang",
     label: "Stok Barang",
     icon: Package,
-    href: `${BASE_PATH}/managergudang/stokbarang`,
+    href: `${BASE_PATH}/managergudang/stockbarang`,
   },
   {
     id: "pengambilanbarang",

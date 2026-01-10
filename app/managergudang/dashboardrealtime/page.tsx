@@ -5,9 +5,9 @@ import { TimeFilterButtons } from "@/components/TimeFilterButtons";
 import { StockPieChart } from "./components/StockPieChart";
 import { StockSummaryCards } from "./components/StockSummaryCards";
 import { StockTrendChart } from "./components/StockTrendChart";
-import { TIME_FILTERS } from "@/lib/constants";
+import { TIME_FILTERS } from "@/lib/realtimeConstans";
 import { TimeFilter, ItemWithStatus } from "@/types/realtime"; // Pastikan import ItemWithStatus
-import { fetchStockItems } from "@/lib/stock";
+import { fetchStockItems } from "@/lib/realtime";
 import {
   calculateDistribution,
   calculateSummary,

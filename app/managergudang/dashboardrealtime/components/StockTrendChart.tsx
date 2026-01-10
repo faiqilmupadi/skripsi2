@@ -15,7 +15,7 @@ import {
 // 2. Import komponen lokal (Pastikan path-nya sesuai projek kamu)
 import { Card } from "@/ui/Card"; 
 import { StockTrend } from "@/types/realtime";
-import { STOCK_COLORS, CHART_CONFIG } from "@/lib/constants";
+import { STOCK_COLORS, CHART_CONFIG } from "@/lib/realtimeConstans";
 
 interface StockTrendChartProps {
   data: StockTrend[];

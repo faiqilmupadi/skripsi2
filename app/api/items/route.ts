@@ -1,25 +1,41 @@
-import { createConnection } from "@/lib/db"; // Import koneksi
+import { createConnection } from "@/lib/db";
 import { NextResponse } from "next/server";
-import { enrichStockItems } from "@/services/realtimeService"; // Import logika bisnis
-import { Item } from "@/types/realtime"; // Pastikan path type sesuai
+import { enrichStockItems } from "@/services/realtimeService";
+import { Item } from "@/types/stock";
 
+
+// 1. GET: Ambil data dari Database
 export async function GET() {
   try {
-    // 1. Konek ke Database
     const db = await createConnection();
-    
-    // 2. Ambil Data Mentah
-    const sql = "SELECT * FROM items"; // Sesuaikan nama tabel
+    const sql = "SELECT * FROM items";
     const [rows] = await db.query(sql);
-
-    // 3. Masukkan ke Logika Bisnis (enrichStockItems)
-    // Kita casting 'rows' sebagai Item[] agar TypeScript tidak marah
     const rawItems = rows as Item[];
-    const processedItems = enrichStockItems(rawItems); 
+    const processedItems = enrichStockItems(rawItems);
 
-    // 4. Return data yang sudah ada status & warnanya ke Frontend
     return NextResponse.json(processedItems);
-    
+  } catch (error: any) {
+    console.log("Database Error:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+// 2. POST: Tambah data ke Database (Dipanggil oleh createStockItem di lib/stock.ts)
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const { nama_barang, stok_saat_ini, rop, safety_stock, satuan } = body;
+
+    const db = await createConnection();
+    const sql = `
+      INSERT INTO items (nama_barang, stok_saat_ini, rop, safety_stock, satuan, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, NOW(), NOW())
+    `;
+
+    // Eksekusi Query
+    await db.query(sql, [nama_barang, stok_saat_ini, rop, safety_stock, satuan]);
+
+    return NextResponse.json({ message: "Berhasil tambah data" }, { status: 201 });
   } catch (error: any) {
     console.log("Database Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

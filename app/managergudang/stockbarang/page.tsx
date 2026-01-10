@@ -10,190 +10,220 @@ import {
 } from "@/types/stock";
 import { getStockStatus, getStatusColor, generateNotifications } from "@/services/stockService";
 import {
-  calculateTotalMovement,
-  calculateTurnoverRate,
-  getFSNCategory,
-  getCategoryColor,
+  enrichItemsWithFSN,
   getDaysFromFilter,
 } from "@/services/fsnService";
+import { fetchStockMovements } from "@/lib/fsn"; 
+
+// ✅ IMPORT API UTAMA
+import { 
+  fetchStockItems, 
+  createStockItem, 
+  updateStockItem, 
+  deleteStockItem 
+} from "@/lib/stock";
+
 import StockTable from "./components/StockTable";
 import NotificationCards from "./components/NotificationCards";
-import { AddModal, EditModal, OrderModal } from "./components/StockModals";
+import { AddModal, EditModal } from "./components/StockModals"; 
 
 export default function StokBarangPage() {
   const [timeFilter, setTimeFilter] = useState<TimeFilter>("7D");
-  
-  // Mock data stok items
-  const [stockItems, setStockItems] = useState<Item[]>([
-    {
-      id: "1",
-      name: "Baut A",
-      rop: 100,
-      jumlah: 90,
-      safetyStock: 50,
-      createdAt: "1/13/2025, 2:21:56 PM",
-    },
-    {
-      id: "2",
-      name: "Mur B",
-      rop: 80,
-      jumlah: 70,
-      safetyStock: 40,
-      createdAt: "1/13/2025, 2:21:56 PM",
-    },
-    {
-      id: "3",
-      name: "Ring C",
-      rop: 120,
-      jumlah: 150,
-      safetyStock: 60,
-      createdAt: "1/13/2025, 2:21:56 PM",
-    },
-  ]);
-
-  // Mock data pergerakan stok untuk menghitung FSN
-  const [stockMovements] = useState<StockMovement[]>([
-    // Baut A - Fast Moving (banyak keluar dalam 7 hari)
-    { id: "m1", item_id: "1", tanggal: "2025-01-09", tipe: "OUT", qty: 30 },
-    { id: "m2", item_id: "1", tanggal: "2025-01-08", tipe: "OUT", qty: 25 },
-    { id: "m3", item_id: "1", tanggal: "2025-01-07", tipe: "OUT", qty: 20 },
-    { id: "m4", item_id: "1", tanggal: "2025-01-06", tipe: "OUT", qty: 15 },
-    
-    // Mur B - Slow Moving (sedikit keluar)
-    { id: "m5", item_id: "2", tanggal: "2025-01-09", tipe: "OUT", qty: 5 },
-    { id: "m6", item_id: "2", tanggal: "2025-01-05", tipe: "OUT", qty: 3 },
-    
-    // Ring C - Non Moving (tidak ada yang keluar)
-  ]);
-
+  const [stockItems, setStockItems] = useState<Item[]>([]);
+  const [stockMovements, setStockMovements] = useState<StockMovement[]>([]);
   const [enrichedItems, setEnrichedItems] = useState<ItemComplete[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const [showOrderModal, setShowOrderModal] = useState(false);
+  // ==========================================
+  // ✅ LOGIC NOTIFIKASI BARU (2 LEVEL)
+  // ==========================================
+  
+  // 1. Permanen: Disimpan di LocalStorage (Jika sudah klik "Sudah Dipesan")
+  //    Efek: Notif hilang selamanya (kecuali status berubah).
+  const [orderedIds, setOrderedIds] = useState<string[]>([]);
+
+  // 2. Sementara: Disimpan di State saja (Jika klik "Sudah Dibaca")
+  //    Efek: Notif hilang sekarang, tapi MUNCUL LAGI kalau direfresh.
+  const [tempReadIds, setTempReadIds] = useState<string[]>([]);
+
+  // ==========================================
+
+  // State Modals
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
 
-  const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
+  // State Selected Data
   const [selectedItem, setSelectedItem] = useState<ItemComplete | null>(null);
 
-  const [orderForm, setOrderForm] = useState({
-    supplier: "",
-    jumlahOrder: "",
-  });
+  // Forms
+  const [addForm, setAddForm] = useState({ nama_barang: "", stok_saat_ini: "", rop: "", safety_stock: "", satuan: "" });
+  const [editForm, setEditForm] = useState({ nama_barang: "", stok_saat_ini: "", rop: "", safety_stock: "", satuan: "" });
 
-  const [addForm, setAddForm] = useState({
-    name: "",
-    jumlah: "",
-    rop: "",
-    safetyStock: "",
-  });
-
-  const [editForm, setEditForm] = useState({
-    name: "",
-    rop: "",
-    safetyStock: "",
-    jumlah: "",
-  });
-
-  // Enrich items dengan status stok dan FSN category
+  // 1. Load Data "Sudah Dipesan" dari LocalStorage saat awal buka
   useEffect(() => {
+    const savedOrders = localStorage.getItem("orderedNotifications");
+    if (savedOrders) {
+      setOrderedIds(JSON.parse(savedOrders));
+    }
+  }, []);
+
+  // 2. Load Data Stock & Movement dari API
+  async function loadData() {
+    try {
+      const [itemsData, movementsData] = await Promise.all([
+        fetchStockItems(),
+        fetchStockMovements()
+      ]);
+
+      setStockItems(itemsData);
+      const outMovements = movementsData.filter((m: any) => m.tipe === "OUT");
+      setStockMovements(outMovements);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  // 3. Logic FSN & Filter Notifikasi
+  useEffect(() => {
+    if (stockItems.length === 0) return;
+
     const days = getDaysFromFilter(timeFilter);
-    
-    const enriched: ItemComplete[] = stockItems.map((item) => {
-      // Hitung status stok
+    const fsnItems = enrichItemsWithFSN(stockItems, stockMovements, days);
+
+    const completeItems: ItemComplete[] = fsnItems.map((item: any) => {
       const status = getStockStatus(item);
       const statusColor = getStatusColor(status);
-
-      // Hitung FSN category
-      const totalMovement = calculateTotalMovement(item.id, stockMovements, days);
-      const turnoverRate = calculateTurnoverRate(totalMovement, days);
-      const category = getFSNCategory(totalMovement, days);
-      const categoryColor = getCategoryColor(category);
-
-      return {
-        ...item,
-        status,
-        statusColor,
-        category,
-        categoryColor,
-        totalMovement,
-        turnoverRate,
-      };
+      return { ...item, status, statusColor };
     });
 
-    setEnrichedItems(enriched);
+    setEnrichedItems(completeItems);
 
-    // Generate notifications
-    const newNotifications = generateNotifications(enriched);
-    setNotifications(newNotifications);
-  }, [stockItems, timeFilter, stockMovements]);
+    // Generate semua kemungkinan notifikasi
+    const allNotifications = generateNotifications(completeItems);
+    
+    // ✅ FILTER UTAMA:
+    // Tampilkan notifikasi HANYA JIKA:
+    // 1. ID-nya belum ada di daftar "Sudah Dipesan" (orderedIds)
+    // 2. DAN ID-nya belum ada di daftar "Baca Sementara" (tempReadIds)
+    const activeNotifications = allNotifications.filter(
+      (n) => !orderedIds.includes(n.id) && !tempReadIds.includes(n.id)
+    );
+    
+    setNotifications(activeNotifications);
 
-  const handleNotificationClick = (notification: Notification) => {
-    setSelectedNotification(notification);
-    setShowOrderModal(true);
+  }, [stockItems, stockMovements, timeFilter, orderedIds, tempReadIds]);
+
+  // ==========================================
+  // ✅ HANDLER AKSI NOTIFIKASI
+  // ==========================================
+
+  // Aksi 1: Mata (Baca Sementara) -> Hilang sampai refresh
+  const handleMarkAsRead = (id: string) => {
+    setTempReadIds((prev) => [...prev, id]); 
   };
 
-  const handleOrderSubmit = () => {
-    console.log("Order submitted:", orderForm);
-    alert(`Pesanan untuk ${selectedNotification?.itemName} telah diproses!`);
-    setShowOrderModal(false);
-    setOrderForm({ supplier: "", jumlahOrder: "" });
+  // Aksi 2: Ceklis (Sudah Dipesan) -> Hilang Permanen
+  const handleMarkAsOrdered = (id: string) => {
+    const newOrderedIds = [...orderedIds, id];
+    setOrderedIds(newOrderedIds);
+    // Simpan ke Browser Memory
+    localStorage.setItem("orderedNotifications", JSON.stringify(newOrderedIds));
+    
+    // Optional Feedback
+    // alert("Barang ditandai dalam pemesanan.");
   };
 
-  const handleAddSubmit = () => {
-    const newItem: Item = {
-      id: Date.now().toString(),
-      name: addForm.name,
-      rop: parseInt(addForm.rop),
-      jumlah: parseInt(addForm.jumlah),
-      safetyStock: parseInt(addForm.safetyStock),
-      createdAt: new Date().toLocaleString(),
-    };
-    setStockItems([...stockItems, newItem]);
-    setShowAddModal(false);
-    setAddForm({ name: "", jumlah: "", rop: "", safetyStock: "" });
+  // ==========================================
+  // CRUD HANDLERS
+  // ==========================================
+
+  // CREATE
+  const handleAddSubmit = async () => {
+    try {
+      const payload = {
+        nama_barang: addForm.nama_barang,
+        stok_saat_ini: parseInt(addForm.stok_saat_ini),
+        rop: parseInt(addForm.rop),
+        safety_stock: parseInt(addForm.safety_stock),
+        satuan: addForm.satuan,
+      };
+
+      await createStockItem(payload);
+      await loadData();
+      setShowAddModal(false);
+      setAddForm({ nama_barang: "", stok_saat_ini: "", rop: "", safety_stock: "", satuan: "" });
+      alert("Barang berhasil ditambahkan!");
+    } catch (error) {
+      alert("Gagal menyimpan data.");
+    }
   };
 
+  // Setup Edit Form
   const handleEditClick = (item: ItemComplete) => {
     setSelectedItem(item);
     setEditForm({
-      name: item.name,
+      nama_barang: item.nama_barang,
+      stok_saat_ini: item.stok_saat_ini.toString(),
       rop: item.rop.toString(),
-      safetyStock: item.safetyStock.toString(),
-      jumlah: item.jumlah.toString(),
+      safety_stock: item.safety_stock.toString(),
+      satuan: item.satuan,
     });
     setShowEditModal(true);
   };
 
-  const handleEditSubmit = () => {
-    if (selectedItem) {
-      setStockItems(
-        stockItems.map((item) =>
-          item.id === selectedItem.id
-            ? {
-                ...item,
-                name: editForm.name,
-                rop: parseInt(editForm.rop),
-                safetyStock: parseInt(editForm.safetyStock),
-                jumlah: parseInt(editForm.jumlah),
-              }
-            : item
-        )
-      );
+  // UPDATE
+  const handleEditSubmit = async () => {
+    if (!selectedItem) return;
+
+    try {
+      const payload = {
+        nama_barang: editForm.nama_barang,
+        stok_saat_ini: parseInt(editForm.stok_saat_ini),
+        rop: parseInt(editForm.rop),
+        safety_stock: parseInt(editForm.safety_stock),
+        satuan: editForm.satuan,
+      };
+
+      await updateStockItem(selectedItem.id, payload);
+      await loadData();
+      setShowEditModal(false);
+      setSelectedItem(null);
+      alert("Data berhasil diperbarui!");
+    } catch (error) {
+      alert("Gagal update data.");
     }
-    setShowEditModal(false);
-    setSelectedItem(null);
   };
 
-  const handleDelete = (id: string) => {
+  // DELETE
+  const handleDelete = async (id: number) => {
     if (confirm("Apakah Anda yakin ingin menghapus barang ini?")) {
-      setStockItems(stockItems.filter((item) => item.id !== id));
+      try {
+        await deleteStockItem(id);
+        await loadData();
+        alert("Barang dihapus.");
+      } catch (error) {
+        alert("Gagal menghapus.");
+      }
     }
   };
+
+  if (loading) {
+    return (
+        <div className="flex h-screen items-center justify-center">
+            <p className="text-lg font-semibold text-gray-500">Memuat Data Stok...</p>
+        </div>
+    );
+  }
 
   return (
     <div className="p-6">
-      {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex gap-2">
           {(["24H", "7D", "1M", "3M", "CUSTOM"] as TimeFilter[]).map((filter) => (
@@ -218,20 +248,19 @@ export default function StokBarangPage() {
         </button>
       </div>
 
-      {/* Table */}
       <StockTable
         items={enrichedItems}
         onEdit={handleEditClick}
-        onDelete={handleDelete}
+        onDelete={(item: any) => handleDelete(item.id)}
       />
 
-      {/* Notification Cards */}
+      {/* ✅ NOTIFIKASI DENGAN 2 HANDLER */}
       <NotificationCards
         notifications={notifications}
-        onNotificationClick={handleNotificationClick}
+        onMarkAsRead={handleMarkAsRead}       // Sementara
+        onMarkAsOrdered={handleMarkAsOrdered} // Permanen
       />
 
-      {/* Modals */}
       <AddModal
         show={showAddModal}
         form={addForm}
@@ -246,15 +275,6 @@ export default function StokBarangPage() {
         onChange={(field, value) => setEditForm({ ...editForm, [field]: value })}
         onSubmit={handleEditSubmit}
         onClose={() => setShowEditModal(false)}
-      />
-
-      <OrderModal
-        show={showOrderModal}
-        notification={selectedNotification}
-        form={orderForm}
-        onChange={(field, value) => setOrderForm({ ...orderForm, [field]: value })}
-        onSubmit={handleOrderSubmit}
-        onClose={() => setShowOrderModal(false)}
       />
     </div>
   );

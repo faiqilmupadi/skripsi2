@@ -11,17 +11,17 @@ import {
   Notification,
   FSNCategory,
 } from "@/types/stock";
-import { STOCK_COLORS } from "@/lib/constants";
+import { STOCK_COLORS } from "@/lib/realtimeConstans";
 
 /**
  * Determine stock status based on business logic
  */
 export function getStockStatus(item: Item): StockStatus {
-  if (item.jumlah > item.rop) {
+  if (item.stok_saat_ini > item.rop) {
     return "aman";
   } else if (
-    item.jumlah > item.safetyStock &&
-    item.jumlah <= item.rop
+    item.stok_saat_ini > item.safety_stock &&
+    item.stok_saat_ini <= item.rop
   ) {
     return "menipis";
   } else {
@@ -153,62 +153,72 @@ export function generateTrendFromCurrentData(
 
 /**
  * Generate notifications based on stock status and FSN category
- */
-export function generateNotifications(
-  items: ItemComplete[]
-): Notification[] {
+ */export function generateNotifications(items: ItemComplete[]): Notification[] {
   const notifications: Notification[] = [];
 
   items.forEach((item) => {
-    // Prioritaskan notifikasi untuk barang fast moving dengan stok kritis/menipis
-    if (item.category === "fast" && item.status === "kritis") {
+    // HANYA PROSES JIKA MENIPIS ATAU KRITIS (Aman tidak perlu notif)
+    if (item.status === "aman") return;
+
+    // ✅ ID UNIK: Gabungan ID Barang + Status. 
+    // Jadi kalau status berubah dari menipis ke kritis, ID berubah -> Dianggap notif baru.
+    const uniqueId = `notif-${item.id}-${item.status}`;
+
+    // 1. FAST MOVING
+    if (item.category === "fast") {
+      if (item.status === "kritis") {
+        notifications.push({
+          id: uniqueId,
+          itemId: item.id,
+          itemName: item.nama_barang,
+          message: `URGENT! ${item.nama_barang} (Fast Moving) sisa ${item.stok_saat_ini}. Stok KRITIS, segera pesan sekarang!`,
+          category: item.category,
+          status: item.status,
+          currentStock: item.stok_saat_ini,
+          priority: "high",
+        });
+      } else if (item.status === "menipis") {
+        notifications.push({
+          id: uniqueId,
+          itemId: item.id,
+          itemName: item.nama_barang,
+          message: `Info: ${item.nama_barang} (Fast Moving) sisa ${item.stok_saat_ini}. Stok mulai menipis.`,
+          category: item.category,
+          status: item.status,
+          currentStock: item.stok_saat_ini,
+          priority: "medium",
+        });
+      }
+    } 
+    // 2. SLOW MOVING
+    else if (item.category === "slow" && item.status === "kritis") {
       notifications.push({
-        id: `notif-${item.id}`,
+        id: uniqueId,
         itemId: item.id,
-        itemName: item.name,
-        message: `${item.name} tergolong fast moving dengan stok ${item.jumlah} yang sudah tergolong kritis, mohon di pesan!`,
+        itemName: item.nama_barang,
+        message: `Peringatan: ${item.nama_barang} (Slow Moving) sisa ${item.stok_saat_ini}. Sudah masuk batas kritis.`,
         category: item.category,
         status: item.status,
-        currentStock: item.jumlah,
-        priority: "high",
-      });
-    } else if (item.category === "fast" && item.status === "menipis") {
-      notifications.push({
-        id: `notif-${item.id}`,
-        itemId: item.id,
-        itemName: item.name,
-        message: `${item.name} tergolong fast moving dengan stok ${item.jumlah} yang mulai menipis, segera pesan!`,
-        category: item.category,
-        status: item.status,
-        currentStock: item.jumlah,
+        currentStock: item.stok_saat_ini,
         priority: "medium",
       });
-    } else if (item.category === "slow" && item.status === "kritis") {
+    } 
+    // 3. NON MOVING
+    else if (item.category === "non" && item.status === "kritis") {
       notifications.push({
-        id: `notif-${item.id}`,
+        id: uniqueId,
         itemId: item.id,
-        itemName: item.name,
-        message: `${item.name} tergolong slow moving dengan stok ${item.jumlah} yang kritis, pertimbangkan untuk pesan!`,
+        itemName: item.nama_barang,
+        message: `${item.nama_barang} sisa ${item.stok_saat_ini} (Kritis). Santai saja, barang jarang keluar.`,
         category: item.category,
         status: item.status,
-        currentStock: item.jumlah,
-        priority: "medium",
-      });
-    } else if (item.status === "kritis" && item.category === "non") {
-      notifications.push({
-        id: `notif-${item.id}`,
-        itemId: item.id,
-        itemName: item.name,
-        message: `${item.name} memiliki stok ${item.jumlah} yang kritis namun jarang digunakan`,
-        category: item.category,
-        status: item.status,
-        currentStock: item.jumlah,
+        currentStock: item.stok_saat_ini,
         priority: "low",
       });
     }
   });
 
-  // Sort by priority: high > medium > low
+  // Sort: High priority paling atas
   return notifications.sort((a, b) => {
     const priorityOrder = { high: 0, medium: 1, low: 2 };
     return priorityOrder[a.priority] - priorityOrder[b.priority];

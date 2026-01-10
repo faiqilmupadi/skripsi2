@@ -8,7 +8,7 @@ import {
   StockTrend, // Ditambahkan
   TimeFilter, // Ditambahkan
 } from "@/types/realtime";
-import { STOCK_COLORS } from "@/lib/constants";
+import { STOCK_COLORS } from "@/lib/realtimeConstans";
 
 /**
  * Determine stock status based on business logic

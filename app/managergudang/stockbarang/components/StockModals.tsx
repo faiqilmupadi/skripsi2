@@ -1,13 +1,16 @@
 // app/managergudang/stockbarang/components/StockModals.tsx
-import { Item } from "@/types/stock";
+import { Dialog, Transition } from "@headlessui/react";
+import { Fragment } from "react";
 
+// === ADD MODAL ===
 interface AddModalProps {
   show: boolean;
   form: {
-    name: string;
-    jumlah: string;
+    nama_barang: string;
+    stok_saat_ini: string;
     rop: string;
-    safetyStock: string;
+    safety_stock: string;
+    satuan: string;
   };
   onChange: (field: string, value: string) => void;
   onSubmit: () => void;
@@ -15,86 +18,91 @@ interface AddModalProps {
 }
 
 export function AddModal({ show, form, onChange, onSubmit, onClose }: AddModalProps) {
-  if (!show) return null;
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
-        <h2 className="text-lg font-semibold mb-4 text-gray-800">
-          Tambah Barang
-        </h2>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Name :
-            </label>
-            <input
-              type="text"
-              value={form.name}
-              onChange={(e) => onChange("name", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              ROP :
-            </label>
-            <input
-              type="number"
-              value={form.rop}
-              onChange={(e) => onChange("rop", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Safety Stock :
-            </label>
-            <input
-              type="number"
-              value={form.safetyStock}
-              onChange={(e) => onChange("safetyStock", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Jumlah :
-            </label>
-            <input
-              type="number"
-              value={form.jumlah}
-              onChange={(e) => onChange("jumlah", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-            />
-          </div>
+    <Transition appear show={show} as={Fragment}>
+      <Dialog as="div" className="relative z-50" onClose={onClose}>
+        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 shadow-xl transition-all">
+            <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900 mb-4">
+              Tambah Barang Baru
+            </Dialog.Title>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Nama Barang</label>
+                <input
+                  type="text"
+                  value={form.nama_barang}
+                  onChange={(e) => onChange("nama_barang", e.target.value)}
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Stok Awal</label>
+                  <input
+                    type="number"
+                    value={form.stok_saat_ini}
+                    onChange={(e) => onChange("stok_saat_ini", e.target.value)}
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Satuan</label>
+                  <input
+                    type="text"
+                    placeholder="Pcs/Unit"
+                    value={form.satuan}
+                    onChange={(e) => onChange("satuan", e.target.value)}
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">ROP</label>
+                  <input
+                    type="number"
+                    value={form.rop}
+                    onChange={(e) => onChange("rop", e.target.value)}
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Safety Stock</label>
+                  <input
+                    type="number"
+                    value={form.safety_stock}
+                    onChange={(e) => onChange("safety_stock", e.target.value)}
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="mt-6 flex justify-end gap-3">
+              <button onClick={onClose} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200">
+                Batal
+              </button>
+              <button onClick={onSubmit} className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
+                Simpan
+              </button>
+            </div>
+          </Dialog.Panel>
         </div>
-        <div className="flex justify-end gap-3 mt-6">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors text-sm font-medium"
-          >
-            Batal
-          </button>
-          <button
-            onClick={onSubmit}
-            className="px-5 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium"
-          >
-            Simpan
-          </button>
-        </div>
-      </div>
-    </div>
+      </Dialog>
+    </Transition>
   );
 }
 
+// === EDIT MODAL ===
 interface EditModalProps {
   show: boolean;
   form: {
-    name: string;
+    nama_barang: string;
+    stok_saat_ini: string;
     rop: string;
-    safetyStock: string;
-    jumlah: string;
+    safety_stock: string;
+    satuan: string;
   };
   onChange: (field: string, value: string) => void;
   onSubmit: () => void;
@@ -102,148 +110,82 @@ interface EditModalProps {
 }
 
 export function EditModal({ show, form, onChange, onSubmit, onClose }: EditModalProps) {
-  if (!show) return null;
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
-        <h2 className="text-lg font-semibold mb-4 text-gray-800">
-          Edit Barang
-        </h2>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Name :
-            </label>
-            <input
-              type="text"
-              value={form.name}
-              onChange={(e) => onChange("name", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              ROP :
-            </label>
-            <input
-              type="number"
-              value={form.rop}
-              onChange={(e) => onChange("rop", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Safety Stock :
-            </label>
-            <input
-              type="number"
-              value={form.safetyStock}
-              onChange={(e) => onChange("safetyStock", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Jumlah :
-            </label>
-            <input
-              type="number"
-              value={form.jumlah}
-              onChange={(e) => onChange("jumlah", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-            />
-          </div>
-        </div>
-        <div className="flex justify-end gap-3 mt-6">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors text-sm font-medium"
-          >
-            Batal
-          </button>
-          <button
-            onClick={onSubmit}
-            className="px-5 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium"
-          >
-            Simpan
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
+    <Transition appear show={show} as={Fragment}>
+      <Dialog as="div" className="relative z-50" onClose={onClose}>
+        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 shadow-xl transition-all">
+            <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900 mb-4">
+              Edit Barang
+            </Dialog.Title>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Nama Barang</label>
+                <input
+                  type="text"
+                  value={form.nama_barang}
+                  onChange={(e) => onChange("nama_barang", e.target.value)}
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                
+                {/* ✅ STOK DISABLED (TIDAK BISA DIEDIT) */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-500">Stok Saat Ini</label>
+                  <input
+                    type="number"
+                    value={form.stok_saat_ini}
+                    disabled // <--- KUNCI
+                    readOnly 
+                    className="mt-1 block w-full rounded-md border border-gray-200 bg-gray-100 text-gray-500 px-3 py-2 shadow-sm cursor-not-allowed"
+                  />
+                  <p className="text-[10px] text-red-400 mt-1">*Stok tidak bisa diedit</p>
+                </div>
 
-interface OrderModalProps {
-  show: boolean;
-  notification: {
-    itemName: string;
-    message: string;
-  } | null;
-  form: {
-    supplier: string;
-    jumlahOrder: string;
-  };
-  onChange: (field: string, value: string) => void;
-  onSubmit: () => void;
-  onClose: () => void;
-}
-
-export function OrderModal({ show, notification, form, onChange, onSubmit, onClose }: OrderModalProps) {
-  if (!show || !notification) return null;
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
-        <h2 className="text-lg font-semibold mb-4 text-gray-800">
-          Pemesanan Barang
-        </h2>
-        <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <p className="text-sm text-gray-800 font-medium">{notification.itemName}</p>
-          <p className="text-xs text-gray-600 mt-1">{notification.message}</p>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Satuan</label>
+                  <input
+                    type="text"
+                    value={form.satuan}
+                    onChange={(e) => onChange("satuan", e.target.value)}
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">ROP</label>
+                  <input
+                    type="number"
+                    value={form.rop}
+                    onChange={(e) => onChange("rop", e.target.value)}
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Safety Stock</label>
+                  <input
+                    type="number"
+                    value={form.safety_stock}
+                    onChange={(e) => onChange("safety_stock", e.target.value)}
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="mt-6 flex justify-end gap-3">
+              <button onClick={onClose} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200">
+                Batal
+              </button>
+              <button onClick={onSubmit} className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
+                Update
+              </button>
+            </div>
+          </Dialog.Panel>
         </div>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Supplier :
-            </label>
-            <input
-              type="text"
-              value={form.supplier}
-              onChange={(e) => onChange("supplier", e.target.value)}
-              placeholder="Masukkan nama supplier"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Jumlah Order :
-            </label>
-            <input
-              type="number"
-              value={form.jumlahOrder}
-              onChange={(e) => onChange("jumlahOrder", e.target.value)}
-              placeholder="Masukkan jumlah"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-            />
-          </div>
-        </div>
-        <div className="flex justify-end gap-3 mt-6">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors text-sm font-medium"
-          >
-            Batal
-          </button>
-          <button
-            onClick={onSubmit}
-            className="px-5 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium"
-          >
-            Pesan
-          </button>
-        </div>
-      </div>
-    </div>
+      </Dialog>
+    </Transition>
   );
 }

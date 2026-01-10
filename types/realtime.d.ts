@@ -1,6 +1,6 @@
 // types/stock.d.ts
 export interface Item {
-  id: string;
+  id: number;
   nama_barang: string;
   rop: number;
   safety_stock: number;

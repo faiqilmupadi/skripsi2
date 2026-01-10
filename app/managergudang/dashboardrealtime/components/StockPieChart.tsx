@@ -5,7 +5,7 @@ import React from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { Card } from "@/ui/Card";
 import { StockDistribution } from "@/types/realtime";
-import { CHART_CONFIG } from "@/lib/constants";
+import { CHART_CONFIG } from "@/lib/realtimeConstans";
 
 interface StockPieChartProps {
   data: StockDistribution[];
