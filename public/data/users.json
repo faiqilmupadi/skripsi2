@@ -1,0 +1,37 @@
+[
+  {
+    "id": "USR001",
+    "nama": "Budi Santoso",
+    "username": "budi.admin",
+    "password": "$2a$10$hashed_password_example_1",
+    "role": "admin_gudang"
+  },
+  {
+    "id": "USR002",
+    "nama": "Siti Nurhaliza",
+    "username": "siti.manajer",
+    "password": "$2a$10$hashed_password_example_2",
+    "role": "manajer_gudang"
+  },
+  {
+    "id": "USR003",
+    "nama": "Ahmad Fauzi",
+    "username": "ahmad.admin",
+    "password": "$2a$10$hashed_password_example_3",
+    "role": "admin_gudang"
+  },
+  {
+    "id": "USR004",
+    "nama": "Rina Wati",
+    "username": "rina.manajer",
+    "password": "$2a$10$hashed_password_example_4",
+    "role": "manajer_gudang"
+  },
+  {
+    "id": "USR005",
+    "nama": "Doni Prasetyo",
+    "username": "doni.admin",
+    "password": "$2a$10$hashed_password_example_5",
+    "role": "admin_gudang"
+  }
+]

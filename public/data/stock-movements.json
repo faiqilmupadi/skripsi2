@@ -1,0 +1,434 @@
+[
+  {
+    "id": "MOV001",
+    "item_id": "SPR001",
+    "tipe": "OUT",
+    "qty": 5,
+    "tanggal": "2024-12-01T09:00:00Z",
+    "keterangan": "Penjualan ke Bengkel Auto"
+  },
+  {
+    "id": "MOV002",
+    "item_id": "SPR001",
+    "tipe": "OUT",
+    "qty": 3,
+    "tanggal": "2024-12-05T10:30:00Z",
+    "keterangan": "Service rutin"
+  },
+  {
+    "id": "MOV003",
+    "item_id": "SPR001",
+    "tipe": "IN",
+    "qty": 20,
+    "tanggal": "2024-12-08T14:00:00Z",
+    "keterangan": "Restock dari supplier"
+  },
+  {
+    "id": "MOV004",
+    "item_id": "SPR001",
+    "tipe": "OUT",
+    "qty": 4,
+    "tanggal": "2024-12-12T11:15:00Z",
+    "keterangan": "Penjualan retail"
+  },
+  {
+    "id": "MOV005",
+    "item_id": "SPR001",
+    "tipe": "OUT",
+    "qty": 6,
+    "tanggal": "2024-12-15T16:20:00Z",
+    "keterangan": "Order online"
+  },
+  {
+    "id": "MOV006",
+    "item_id": "SPR001",
+    "tipe": "OUT",
+    "qty": 3,
+    "tanggal": "2024-12-18T09:45:00Z",
+    "keterangan": "Penjualan ke dealer"
+  },
+  {
+    "id": "MOV007",
+    "item_id": "SPR001",
+    "tipe": "OUT",
+    "qty": 5,
+    "tanggal": "2024-12-20T13:30:00Z",
+    "keterangan": "Service berkala"
+  },
+  {
+    "id": "MOV008",
+    "item_id": "SPR001",
+    "tipe": "OUT",
+    "qty": 4,
+    "tanggal": "2024-12-22T10:00:00Z",
+    "keterangan": "Penjualan retail"
+  },
+  {
+    "id": "MOV009",
+    "item_id": "SPR001",
+    "tipe": "OUT",
+    "qty": 2,
+    "tanggal": "2024-12-25T15:10:00Z",
+    "keterangan": "Pesanan khusus"
+  },
+  {
+    "id": "MOV010",
+    "item_id": "SPR001",
+    "tipe": "OUT",
+    "qty": 3,
+    "tanggal": "2024-12-28T11:30:00Z",
+    "keterangan": "Penjualan walk-in"
+  },
+  {
+    "id": "MOV011",
+    "item_id": "SPR001",
+    "tipe": "OUT",
+    "qty": 5,
+    "tanggal": "2024-12-30T14:20:00Z",
+    "keterangan": "Distributor order"
+  },
+  {
+    "id": "MOV012",
+    "item_id": "SPR002",
+    "tipe": "OUT",
+    "qty": 2,
+    "tanggal": "2024-12-03T10:15:00Z",
+    "keterangan": "Ganti kampas rem"
+  },
+  {
+    "id": "MOV013",
+    "item_id": "SPR002",
+    "tipe": "OUT",
+    "qty": 1,
+    "tanggal": "2024-12-10T14:30:00Z",
+    "keterangan": "Service berkala"
+  },
+  {
+    "id": "MOV014",
+    "item_id": "SPR002",
+    "tipe": "IN",
+    "qty": 10,
+    "tanggal": "2024-12-12T09:00:00Z",
+    "keterangan": "Restock supplier"
+  },
+  {
+    "id": "MOV015",
+    "item_id": "SPR002",
+    "tipe": "OUT",
+    "qty": 2,
+    "tanggal": "2024-12-18T16:45:00Z",
+    "keterangan": "Penjualan retail"
+  },
+  {
+    "id": "MOV016",
+    "item_id": "SPR002",
+    "tipe": "OUT",
+    "qty": 1,
+    "tanggal": "2024-12-22T11:20:00Z",
+    "keterangan": "Perbaikan darurat"
+  },
+  {
+    "id": "MOV017",
+    "item_id": "SPR002",
+    "tipe": "OUT",
+    "qty": 2,
+    "tanggal": "2024-12-28T13:10:00Z",
+    "keterangan": "Pesanan dealer"
+  },
+  {
+    "id": "MOV018",
+    "item_id": "SPR003",
+    "tipe": "OUT",
+    "qty": 4,
+    "tanggal": "2024-12-05T10:00:00Z",
+    "keterangan": "Tune up"
+  },
+  {
+    "id": "MOV019",
+    "item_id": "SPR003",
+    "tipe": "OUT",
+    "qty": 1,
+    "tanggal": "2024-12-20T15:30:00Z",
+    "keterangan": "Ganti busi"
+  },
+  {
+    "id": "MOV020",
+    "item_id": "SPR004",
+    "tipe": "IN",
+    "qty": 15,
+    "tanggal": "2024-12-02T08:30:00Z",
+    "keterangan": "Restock aki"
+  },
+  {
+    "id": "MOV021",
+    "item_id": "SPR004",
+    "tipe": "OUT",
+    "qty": 3,
+    "tanggal": "2024-12-07T11:45:00Z",
+    "keterangan": "Penjualan retail"
+  },
+  {
+    "id": "MOV022",
+    "item_id": "SPR004",
+    "tipe": "OUT",
+    "qty": 2,
+    "tanggal": "2024-12-15T14:20:00Z",
+    "keterangan": "Ganti aki mobil"
+  },
+  {
+    "id": "MOV023",
+    "item_id": "SPR004",
+    "tipe": "OUT",
+    "qty": 4,
+    "tanggal": "2024-12-20T09:30:00Z",
+    "keterangan": "Order fleet"
+  },
+  {
+    "id": "MOV024",
+    "item_id": "SPR004",
+    "tipe": "OUT",
+    "qty": 3,
+    "tanggal": "2024-12-25T16:00:00Z",
+    "keterangan": "Distributor"
+  },
+  {
+    "id": "MOV025",
+    "item_id": "SPR004",
+    "tipe": "OUT",
+    "qty": 2,
+    "tanggal": "2024-12-28T10:45:00Z",
+    "keterangan": "Penjualan retail"
+  },
+  {
+    "id": "MOV026",
+    "item_id": "SPR004",
+    "tipe": "OUT",
+    "qty": 3,
+    "tanggal": "2024-12-30T13:15:00Z",
+    "keterangan": "Service berkala"
+  },
+  {
+    "id": "MOV027",
+    "item_id": "SPR005",
+    "tipe": "OUT",
+    "qty": 2,
+    "tanggal": "2024-12-08T10:30:00Z",
+    "keterangan": "Ganti timing belt"
+  },
+  {
+    "id": "MOV028",
+    "item_id": "SPR005",
+    "tipe": "IN",
+    "qty": 20,
+    "tanggal": "2024-12-10T14:00:00Z",
+    "keterangan": "Restock"
+  },
+  {
+    "id": "MOV029",
+    "item_id": "SPR005",
+    "tipe": "OUT",
+    "qty": 3,
+    "tanggal": "2024-12-18T11:20:00Z",
+    "keterangan": "Service 40k km"
+  },
+  {
+    "id": "MOV030",
+    "item_id": "SPR005",
+    "tipe": "OUT",
+    "qty": 1,
+    "tanggal": "2024-12-22T15:45:00Z",
+    "keterangan": "Penjualan retail"
+  },
+  {
+    "id": "MOV031",
+    "item_id": "SPR005",
+    "tipe": "OUT",
+    "qty": 2,
+    "tanggal": "2024-12-27T09:30:00Z",
+    "keterangan": "Order bengkel"
+  },
+  {
+    "id": "MOV032",
+    "item_id": "SPR006",
+    "tipe": "OUT",
+    "qty": 2,
+    "tanggal": "2024-12-15T13:00:00Z",
+    "keterangan": "Ganti shock"
+  },
+  {
+    "id": "MOV033",
+    "item_id": "SPR007",
+    "tipe": "IN",
+    "qty": 30,
+    "tanggal": "2024-12-01T08:00:00Z",
+    "keterangan": "Restock coolant"
+  },
+  {
+    "id": "MOV034",
+    "item_id": "SPR007",
+    "tipe": "OUT",
+    "qty": 5,
+    "tanggal": "2024-12-05T10:20:00Z",
+    "keterangan": "Penjualan retail"
+  },
+  {
+    "id": "MOV035",
+    "item_id": "SPR007",
+    "tipe": "OUT",
+    "qty": 4,
+    "tanggal": "2024-12-10T14:30:00Z",
+    "keterangan": "Flush radiator"
+  },
+  {
+    "id": "MOV036",
+    "item_id": "SPR007",
+    "tipe": "OUT",
+    "qty": 6,
+    "tanggal": "2024-12-15T11:15:00Z",
+    "keterangan": "Order dealer"
+  },
+  {
+    "id": "MOV037",
+    "item_id": "SPR007",
+    "tipe": "OUT",
+    "qty": 3,
+    "tanggal": "2024-12-20T16:40:00Z",
+    "keterangan": "Penjualan online"
+  },
+  {
+    "id": "MOV038",
+    "item_id": "SPR007",
+    "tipe": "OUT",
+    "qty": 5,
+    "tanggal": "2024-12-25T09:50:00Z",
+    "keterangan": "Service berkala"
+  },
+  {
+    "id": "MOV039",
+    "item_id": "SPR007",
+    "tipe": "OUT",
+    "qty": 4,
+    "tanggal": "2024-12-28T13:20:00Z",
+    "keterangan": "Distributor"
+  },
+  {
+    "id": "MOV040",
+    "item_id": "SPR007",
+    "tipe": "OUT",
+    "qty": 3,
+    "tanggal": "2024-12-30T15:10:00Z",
+    "keterangan": "Penjualan retail"
+  },
+  {
+    "id": "MOV041",
+    "item_id": "SPR008",
+    "tipe": "OUT",
+    "qty": 2,
+    "tanggal": "2024-12-07T10:30:00Z",
+    "keterangan": "Ganti wiper"
+  },
+  {
+    "id": "MOV042",
+    "item_id": "SPR008",
+    "tipe": "IN",
+    "qty": 15,
+    "tanggal": "2024-12-12T14:00:00Z",
+    "keterangan": "Restock"
+  },
+  {
+    "id": "MOV043",
+    "item_id": "SPR008",
+    "tipe": "OUT",
+    "qty": 3,
+    "tanggal": "2024-12-18T11:45:00Z",
+    "keterangan": "Penjualan retail"
+  },
+  {
+    "id": "MOV044",
+    "item_id": "SPR008",
+    "tipe": "OUT",
+    "qty": 2,
+    "tanggal": "2024-12-22T15:20:00Z",
+    "keterangan": "Service berkala"
+  },
+  {
+    "id": "MOV045",
+    "item_id": "SPR008",
+    "tipe": "OUT",
+    "qty": 1,
+    "tanggal": "2024-12-28T09:40:00Z",
+    "keterangan": "Order online"
+  },
+  {
+    "id": "MOV046",
+    "item_id": "SPR009",
+    "tipe": "OUT",
+    "qty": 2,
+    "tanggal": "2024-12-10T13:30:00Z",
+    "keterangan": "Ganti lampu"
+  },
+  {
+    "id": "MOV047",
+    "item_id": "SPR009",
+    "tipe": "OUT",
+    "qty": 1,
+    "tanggal": "2024-12-25T16:15:00Z",
+    "keterangan": "Penjualan retail"
+  },
+  {
+    "id": "MOV048",
+    "item_id": "SPR010",
+    "tipe": "IN",
+    "qty": 25,
+    "tanggal": "2024-12-03T08:30:00Z",
+    "keterangan": "Restock v-belt"
+  },
+  {
+    "id": "MOV049",
+    "item_id": "SPR010",
+    "tipe": "OUT",
+    "qty": 4,
+    "tanggal": "2024-12-08T11:20:00Z",
+    "keterangan": "Ganti v-belt"
+  },
+  {
+    "id": "MOV050",
+    "item_id": "SPR010",
+    "tipe": "OUT",
+    "qty": 3,
+    "tanggal": "2024-12-15T14:45:00Z",
+    "keterangan": "Service rutin"
+  },
+  {
+    "id": "MOV051",
+    "item_id": "SPR010",
+    "tipe": "OUT",
+    "qty": 5,
+    "tanggal": "2024-12-20T10:10:00Z",
+    "keterangan": "Order dealer"
+  },
+  {
+    "id": "MOV052",
+    "item_id": "SPR010",
+    "tipe": "OUT",
+    "qty": 2,
+    "tanggal": "2024-12-25T16:30:00Z",
+    "keterangan": "Penjualan retail"
+  },
+  {
+    "id": "MOV053",
+    "item_id": "SPR010",
+    "tipe": "OUT",
+    "qty": 4,
+    "tanggal": "2024-12-28T13:50:00Z",
+    "keterangan": "Distributor"
+  },
+  {
+    "id": "MOV054",
+    "item_id": "SPR010",
+    "tipe": "OUT",
+    "qty": 3,
+    "tanggal": "2024-12-30T11:25:00Z",
+    "keterangan": "Service berkala"
+  }
+]
