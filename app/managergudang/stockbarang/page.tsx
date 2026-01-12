@@ -14,13 +14,13 @@ import {
   getDaysFromFilter,
 } from "@/services/fsnService";
 import { fetchStockMovements } from "@/lib/fsn"; 
-
-// ✅ IMPORT API UTAMA
 import { 
   fetchStockItems, 
   createStockItem, 
   updateStockItem, 
-  deleteStockItem 
+  deleteStockItem,
+  fetchNotifiedItemIds, 
+  saveNotificationDB    
 } from "@/lib/stock";
 
 import StockTable from "./components/StockTable";
@@ -35,50 +35,30 @@ export default function StokBarangPage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // ==========================================
-  // ✅ LOGIC NOTIFIKASI BARU (2 LEVEL)
-  // ==========================================
-  
-  // 1. Permanen: Disimpan di LocalStorage (Jika sudah klik "Sudah Dipesan")
-  //    Efek: Notif hilang selamanya (kecuali status berubah).
-  const [orderedIds, setOrderedIds] = useState<string[]>([]);
-
-  // 2. Sementara: Disimpan di State saja (Jika klik "Sudah Dibaca")
-  //    Efek: Notif hilang sekarang, tapi MUNCUL LAGI kalau direfresh.
+  const [notifiedIds, setNotifiedIds] = useState<number[]>([]);
   const [tempReadIds, setTempReadIds] = useState<string[]>([]);
 
-  // ==========================================
-
-  // State Modals
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
 
-  // State Selected Data
   const [selectedItem, setSelectedItem] = useState<ItemComplete | null>(null);
 
-  // Forms
   const [addForm, setAddForm] = useState({ nama_barang: "", stok_saat_ini: "", rop: "", safety_stock: "", satuan: "" });
   const [editForm, setEditForm] = useState({ nama_barang: "", stok_saat_ini: "", rop: "", safety_stock: "", satuan: "" });
 
-  // 1. Load Data "Sudah Dipesan" dari LocalStorage saat awal buka
-  useEffect(() => {
-    const savedOrders = localStorage.getItem("orderedNotifications");
-    if (savedOrders) {
-      setOrderedIds(JSON.parse(savedOrders));
-    }
-  }, []);
-
-  // 2. Load Data Stock & Movement dari API
   async function loadData() {
+    setLoading(true);
     try {
-      const [itemsData, movementsData] = await Promise.all([
+      const [itemsData, movementsData, dbNotificationData] = await Promise.all([
         fetchStockItems(),
-        fetchStockMovements()
+        fetchStockMovements(),
+        fetchNotifiedItemIds()
       ]);
 
       setStockItems(itemsData);
       const outMovements = movementsData.filter((m: any) => m.tipe === "OUT");
       setStockMovements(outMovements);
+      setNotifiedIds(dbNotificationData);
     } catch (error) {
       console.error(error);
     } finally {
@@ -90,7 +70,6 @@ export default function StokBarangPage() {
     loadData();
   }, []);
 
-  // 3. Logic FSN & Filter Notifikasi
   useEffect(() => {
     if (stockItems.length === 0) return;
 
@@ -105,46 +84,29 @@ export default function StokBarangPage() {
 
     setEnrichedItems(completeItems);
 
-    // Generate semua kemungkinan notifikasi
     const allNotifications = generateNotifications(completeItems);
     
-    // ✅ FILTER UTAMA:
-    // Tampilkan notifikasi HANYA JIKA:
-    // 1. ID-nya belum ada di daftar "Sudah Dipesan" (orderedIds)
-    // 2. DAN ID-nya belum ada di daftar "Baca Sementara" (tempReadIds)
     const activeNotifications = allNotifications.filter(
-      (n) => !orderedIds.includes(n.id) && !tempReadIds.includes(n.id)
+      (n) => !notifiedIds.includes(n.itemId) && !tempReadIds.includes(n.id)
     );
     
     setNotifications(activeNotifications);
 
-  }, [stockItems, stockMovements, timeFilter, orderedIds, tempReadIds]);
+  }, [stockItems, stockMovements, timeFilter, notifiedIds, tempReadIds]);
 
-  // ==========================================
-  // ✅ HANDLER AKSI NOTIFIKASI
-  // ==========================================
-
-  // Aksi 1: Mata (Baca Sementara) -> Hilang sampai refresh
   const handleMarkAsRead = (id: string) => {
     setTempReadIds((prev) => [...prev, id]); 
   };
 
-  // Aksi 2: Ceklis (Sudah Dipesan) -> Hilang Permanen
-  const handleMarkAsOrdered = (id: string) => {
-    const newOrderedIds = [...orderedIds, id];
-    setOrderedIds(newOrderedIds);
-    // Simpan ke Browser Memory
-    localStorage.setItem("orderedNotifications", JSON.stringify(newOrderedIds));
-    
-    // Optional Feedback
-    // alert("Barang ditandai dalam pemesanan.");
+  const handleMarkAsOrdered = async (notificationId: string, itemId: number, itemName: string) => {
+    try {
+      setNotifiedIds((prev) => [...prev, itemId]);
+      await saveNotificationDB(itemId, itemName);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  // ==========================================
-  // CRUD HANDLERS
-  // ==========================================
-
-  // CREATE
   const handleAddSubmit = async () => {
     try {
       const payload = {
@@ -165,7 +127,6 @@ export default function StokBarangPage() {
     }
   };
 
-  // Setup Edit Form
   const handleEditClick = (item: ItemComplete) => {
     setSelectedItem(item);
     setEditForm({
@@ -178,7 +139,6 @@ export default function StokBarangPage() {
     setShowEditModal(true);
   };
 
-  // UPDATE
   const handleEditSubmit = async () => {
     if (!selectedItem) return;
 
@@ -201,7 +161,6 @@ export default function StokBarangPage() {
     }
   };
 
-  // DELETE
   const handleDelete = async (id: number) => {
     if (confirm("Apakah Anda yakin ingin menghapus barang ini?")) {
       try {
@@ -254,11 +213,15 @@ export default function StokBarangPage() {
         onDelete={(item: any) => handleDelete(item.id)}
       />
 
-      {/* ✅ NOTIFIKASI DENGAN 2 HANDLER */}
       <NotificationCards
         notifications={notifications}
-        onMarkAsRead={handleMarkAsRead}       // Sementara
-        onMarkAsOrdered={handleMarkAsOrdered} // Permanen
+        onMarkAsRead={handleMarkAsRead}
+        onMarkAsOrdered={(id) => {
+            const notif = notifications.find(n => n.id === id);
+            if (notif) {
+                handleMarkAsOrdered(id, notif.itemId, notif.itemName);
+            }
+        }}
       />
 
       <AddModal

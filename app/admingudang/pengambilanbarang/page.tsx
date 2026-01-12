@@ -1,4 +1,3 @@
-// app/managergudang/pengambilanbarang/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -68,7 +67,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
-      {/* Header Filter */}
+      {/* Header Filter (Visual Only sesuai screenshot) */}
       <div className="flex gap-2 mb-8">
         {["24H", "7D", "1M", "3M", "CUSTOM"].map((filter, index) => (
           <button

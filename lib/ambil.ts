@@ -1,8 +1,8 @@
 // lib/ambil.ts
 import { ItemCheckout, CheckoutPayload } from "@/types/ambil";
 
-const API_URL = "/api/items"; // Endpoint untuk ambil list barang
-const CHECKOUT_URL = "/api/checkout"; // Endpoint baru untuk proses checkout
+const API_URL = "/api/items"; 
+const CHECKOUT_URL = "/api/checkout"; 
 
 // Ambil list barang untuk tabel
 export async function fetchItemsForCheckout(): Promise<ItemCheckout[]> {

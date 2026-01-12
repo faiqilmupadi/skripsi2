@@ -35,7 +35,7 @@ export const ADMIN_MENU_ITEMS: MenuItem[] = [
     id: "stokbarang",
     label: "Stok Barang",
     icon: Package,
-    href: `${BASE_PATH}/admingudang/stokbarang`,
+    href: `${BASE_PATH}/admingudang/stockbarang`,
   },
   {
     id: "pengambilanbarang",

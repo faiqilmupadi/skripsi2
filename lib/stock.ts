@@ -1,14 +1,14 @@
 // lib/stock.ts
 
-import { ItemWithStatus } from "@/types/stock"; // Pastikan path ini sesuai file type kamu
+import { ItemWithStatus } from "@/types/stock"; // Pastikan path ini sesuai
 
-const API_URL = "/api/items"; // Gunakan relative path agar aman saat deploy
+const API_URL = "/api/items"; // Relative path untuk API items
 
 // ================= GET (READ) =================
 export async function fetchStockItems(): Promise<ItemWithStatus[]> {
   try {
     // Gunakan no-store agar data selalu fresh (tidak dicache browser)
-    const res = await fetch(API_URL, { cache: "no-store" }); 
+    const res = await fetch(API_URL, { cache: "no-store" });
 
     if (!res.ok) {
       throw new Error("Failed to fetch stock items");
@@ -40,7 +40,7 @@ export async function createStockItem(data: {
     return true;
   } catch (error) {
     console.error("Error create item:", error);
-    throw error; // Lempar error agar bisa ditangkap di UI (alert)
+    throw error;
   }
 }
 
@@ -81,6 +81,36 @@ export async function deleteStockItem(id: number): Promise<boolean> {
     return true;
   } catch (error) {
     console.error("Error delete item:", error);
+    throw error;
+  }
+}
+
+// ================= NOTIFICATION LOGIC =================
+
+// Ambil list ID yang sudah ada di tabel notification
+export async function fetchNotifiedItemIds(): Promise<number[]> {
+  try {
+    const res = await fetch("/api/notification", { cache: "no-store" });
+    if (!res.ok) throw new Error("Gagal mengambil data notifikasi");
+    return await res.json();
+  } catch (error) {
+    console.error("Error fetch notification IDs:", error);
+    return [];
+  }
+}
+
+// Simpan ke tabel notification
+export async function saveNotificationDB(itemId: number, namaBarang: string): Promise<void> {
+  try {
+    const res = await fetch("/api/notification", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ itemId, namaBarang }),
+    });
+
+    if (!res.ok) throw new Error("Gagal menyimpan notifikasi");
+  } catch (error) {
+    console.error("Error saving notification:", error);
     throw error;
   }
 }
