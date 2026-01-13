@@ -7,7 +7,6 @@ export interface ItemCheckout {
   created_at: string;
 }
 
-
 export interface CheckoutPayload {
   itemId: number;
   requesterName: string; 
