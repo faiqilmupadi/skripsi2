@@ -1,11 +1,10 @@
-// app/api/notification/route.ts
-import { createConnection } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 // GET: Ambil daftar ID barang yang sudah ada di tabel notification
 export async function GET() {
   try {
-    const db = await createConnection();
+    const db = getDb();
     // Kita ambil item_id nya saja untuk filter di frontend
     const [rows]: any = await db.query("SELECT item_id FROM notification WHERE sudah_di_pesan = 1");
     
@@ -28,7 +27,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Data kurang lengkap" }, { status: 400 });
     }
 
-    const db = await createConnection();
+    const db = getDb();
 
     // Cek duplikasi dulu
     const [existing]: any = await db.query("SELECT id FROM notification WHERE item_id = ?", [itemId]);

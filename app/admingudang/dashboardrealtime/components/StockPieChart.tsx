@@ -3,7 +3,7 @@
 
 import React from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
-import { Card } from "@/ui/Card";
+import { Card } from "@/components/ui/Card";
 import { StockDistribution } from "@/types/realtime";
 import { CHART_CONFIG } from "@/lib/realtimeConstans";
 

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
-import { Card } from "@/ui/Card";
+import { Card } from "@/components/ui/Card";
 import { FSNDistribution } from "@/types/fsn";
 import { CHART_CONFIG } from "@/lib/fsnConstants";
 

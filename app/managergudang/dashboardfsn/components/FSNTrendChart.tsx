@@ -10,7 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { Card } from "@/ui/Card";
+import { Card } from "@/components/ui/Card";
 import { FSNTrend } from "@/types/fsn";
 import { FSN_COLORS, CHART_CONFIG } from "@/lib/fsnConstants";
 

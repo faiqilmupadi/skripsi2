@@ -16,11 +16,12 @@ export interface ItemWithStatus extends Item {
   color: string;
 }
 
+// UPDATE DI SINI: Tambahkan [key: string]: any
 export interface StockDistribution {
   name: string;
   value: number;
   color: string;
-  [key: string]: string | number;
+  [key: string]: any; // <--- INI PENTING UNTUK RECHARTS
 }
 
 export interface StockTrend {

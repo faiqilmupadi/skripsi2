@@ -13,46 +13,37 @@ export default function ManagerLayout({ children }: ManagerLayoutProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleSignOut = () => {
-    console.log("Manager signed out");
+    // Tambahkan logic logout
     router.push("/login");
   };
 
-  const SIDEBAR_WIDTH = isCollapsed ? "80px" : "280px";
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
+  const SIDEBAR_WIDTH = isCollapsed ? "80px" : "260px";
 
   return (
-    <div style={styles.container}>
+    <div style={{ display: "flex", minHeight: "100vh", backgroundColor: "#f3f4f6" }}>
       <SidebarManager
         onSignOut={handleSignOut}
-        defaultCollapsed={isCollapsed}
+        isCollapsed={isCollapsed}
+        toggleSidebar={toggleSidebar}
       />
 
       <main
         style={{
-          ...styles.mainContent,
+          flex: 1,
           marginLeft: SIDEBAR_WIDTH,
+          minHeight: "100vh",
+          transition: "margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+          width: `calc(100% - ${SIDEBAR_WIDTH})`,
         }}
       >
-        <div style={styles.contentWrapper}>
+        <div style={{ padding: "32px", maxWidth: "1600px", margin: "0 auto" }}>
           {children}
         </div>
       </main>
     </div>
   );
 }
-
-const styles: Record<string, React.CSSProperties> = {
-  container: {
-    display: "flex",
-    minHeight: "100vh",
-    backgroundColor: "#f8f9fa",
-  },
-  mainContent: {
-    flex: 1,
-    minHeight: "100vh",
-    transition: "margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-  },
-  contentWrapper: {
-    padding: "24px",
-    maxWidth: "100%",
-  },
-};

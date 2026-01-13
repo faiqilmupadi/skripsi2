@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { ItemCheckout } from "@/types/ambil";
-import { fetchItemsForCheckout, processCheckoutItem } from "@/lib/ambil";
+import { fetchItemsForCheckout, processCheckoutItem } from "@/lib/ambilAdmin";
 import StockTable from "./components/StockTable";
 import { CheckoutModal } from "./components/StockModals";
 

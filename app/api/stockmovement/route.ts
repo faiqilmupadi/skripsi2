@@ -1,9 +1,9 @@
-import { createConnection } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const db = await createConnection();
+    const db = getDb();
     const sql = "SELECT * FROM stock_movements ORDER BY tanggal DESC"; 
     
     const [rows] = await db.query(sql);

@@ -8,7 +8,7 @@ import {
   Notification,
   StockMovement,
 } from "@/types/stock";
-import { getStockStatus, getStatusColor, generateNotifications } from "@/services/stockService";
+import { getStockStatus, getStatusColor, generateNotifications } from "@/services/stockAdminService";
 import {
   enrichItemsWithFSN,
   getDaysFromFilter,
@@ -21,7 +21,7 @@ import {
   deleteStockItem,
   fetchNotifiedItemIds, 
   saveNotificationDB    
-} from "@/lib/stock";
+} from "@/lib/stockAdmin";
 
 import StockTable from "./components/StockTable";
 import NotificationCards from "./components/NotificationCards";

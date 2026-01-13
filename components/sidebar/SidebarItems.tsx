@@ -20,18 +20,6 @@ const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 export const ADMIN_MENU_ITEMS: MenuItem[] = [
   {
-    id: "dashboardrealtime",
-    label: "Dashboard Realtime",
-    icon: Clock,
-    href: `${BASE_PATH}/admingudang/dashboardrealtime`,
-  },
-  {
-    id: "dashboardfsn",
-    label: "Dashboard FSN",
-    icon: Home,
-    href: `${BASE_PATH}/admingudang/dashboardfsn`,
-  },
-  {
     id: "stokbarang",
     label: "Stok Barang",
     icon: Package,
