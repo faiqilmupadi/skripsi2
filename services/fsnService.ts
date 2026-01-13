@@ -27,19 +27,15 @@ export function calculateTotalMovement(
 ): number {
   const cutoffDate = new Date();
   cutoffDate.setDate(cutoffDate.getDate() - days);
-
-  // Filter gerakan stok
   const relevantMovements = movements.filter((m) => {
     const movementDate = new Date(m.tanggal);
     return (
       m.item_id == itemId && 
       movementDate >= cutoffDate &&
-      m.tipe === "OUT" // PASTIKAN HANYA BARANG KELUAR
+      m.tipe === "OUT" 
     );
   });
 
-  // PENTING: Gunakan reduce untuk menjumlahkan QTY (Volume Pemakaian),
-  // bukan .length (Frekuensi Transaksi).
   return relevantMovements.reduce((total, m) => total + m.qty, 0);
 }
 
@@ -47,14 +43,11 @@ export function calculateTurnoverRate(
   totalMovement: number,
   days: number
 ): number {
-  // Logic: Rata-rata pemakaian per bulan berdasarkan range hari yang dipilih
   const monthlyRate = (totalMovement / Math.max(1, days)) * 30;
   return Math.round(monthlyRate * 10) / 10;
 }
 
 export function getFSNCategory(totalMovement: number, days: number): FSNCategory {
-  // Normalisasi threshold berdasarkan durasi hari
-  // (Agar threshold 30 hari tidak dipakai mentah-mentah untuk filter 7 hari)
   const ratio = days / 30; 
   
   const fastThreshold = Math.ceil(FSN_THRESHOLDS.FAST_MOVING * ratio);
@@ -93,7 +86,7 @@ export function enrichItemsWithFSN(
       ...item,
       category,
       color,
-      totalMovement, // Ini sekarang merepresentasikan Total Qty Keluar (Usage)
+      totalMovement, 
       turnoverRate,
     };
   });
@@ -127,7 +120,6 @@ export function calculateFSNSummary(items: ItemWithFSN[]): FSNSummary {
   return counts;
 }
 
-// Logic visual trend (mockup based on current state)
 export function generateFSNTrendFromCurrentData(
   items: ItemWithFSN[],
   filter: TimeFilter
@@ -158,7 +150,6 @@ export function generateFSNTrendFromCurrentData(
       ? date.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })
       : date.toLocaleDateString("id-ID", { day: "2-digit", month: "2-digit" });
 
-    // Simulasi variasi data sejarah (hanya untuk visualisasi UI)
     const varFast = i === 0 ? 0 : Math.floor((Math.random() - 0.5) * 4); 
     const varSlow = i === 0 ? 0 : Math.floor((Math.random() - 0.5) * 2);
 

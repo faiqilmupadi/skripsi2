@@ -1,20 +1,19 @@
-// types/report.ts
 export interface WeeklySummary {
   totalTransaksi: number;
   totalBarangKeluar: number;
-  totalBarangMasuk: number; // Dari restock orders
+  totalBarangMasuk: number; 
   totalStokKritis: number;
 }
 
 export interface TopUser {
   nama: string;
-  total_activity: number; // Jumlah transaksi yang dilakukan
+  total_activity: number; 
   role: string;
 }
 
 export interface TopItem {
   nama_barang: string;
-  total_qty: number; // Total item yang bergerak (Out)
+  total_qty: number; 
   satuan: string;
 }
 

@@ -1,23 +1,18 @@
-// types/stock.d.ts
-// ✅ UNIFIED & DISESUAIKAN DENGAN DATABASE REAL
-
 export type StockStatus = "aman" | "menipis" | "kritis";
 export type TimeFilter = "24H" | "7D" | "1M" | "3M" | "CUSTOM";
 export type FSNCategory = "fast" | "slow" | "non";
 
-// ============= ITEM INTERFACE (SESUAI DB) =============
 export interface Item {
-  id: number;                    // ✅ int di DB (AUTO_INCREMENT) - BUKAN string!
-  nama_barang: string;           // ✅ varchar di DB - BUKAN "name"!
-  rop: number;                   // ✅ int di DB
-  stok_saat_ini: number;         // ✅ int di DB - BUKAN "jumlah"!
-  safety_stock: number;          // ✅ int di DB - BUKAN "safetyStock" (camelCase)!
-  satuan: string;                // ✅ varchar di DB - FIELD BARU!
-  created_at: string;            // ✅ timestamp di DB - BUKAN "createdAt"!
-  updated_at: string;            // ✅ timestamp di DB - FIELD BARU!
+  id: number;
+  nama_barang: string;
+  rop: number;
+  stok_saat_ini: number;
+  safety_stock: number;
+  satuan: string;
+  created_at: string;
+  updated_at: string;
 }
 
-// ============= ITEM WITH STATUS & FSN =============
 export interface ItemWithStatus extends Item {
   status: StockStatus;
   color: string;
@@ -39,18 +34,16 @@ export interface ItemComplete extends Item {
   turnoverRate: number;
 }
 
-// ============= STOCK MOVEMENT (SESUAI DB) =============
 export interface StockMovement {
-  id: number;                    // ✅ int di DB (AUTO_INCREMENT)
-  item_id: number;               // ✅ int di DB - BUKAN string!
-  user_id?: number;              // ✅ int di DB - optional
-  tipe: "IN" | "OUT";            // ✅ enum di DB (sekarang hanya OUT, tapi support IN juga)
-  qty: number;                   // ✅ int di DB
-  tanggal: string;               // ✅ timestamp di DB
-  keterangan?: string;           // ✅ optional (bisa ditambahkan nanti)
+  id: number;
+  item_id: number;
+  user_id?: number;
+  tipe: "IN" | "OUT";
+  qty: number;
+  tanggal: string;
+  keterangan?: string;
 }
 
-// ============= DISTRIBUTION & SUMMARY =============
 export interface StockDistribution {
   name: string;
   value: number;
@@ -71,10 +64,9 @@ export interface StockTrend {
   kritis: number;
 }
 
-// ============= NOTIFICATION =============
 export interface Notification {
-  id: string;                    // Bisa tetap string untuk frontend
-  itemId: number;                // ✅ Sesuai dengan Item.id (number)
+  id: string;
+  itemId: number;
   itemName: string;
   message: string;
   category: FSNCategory;

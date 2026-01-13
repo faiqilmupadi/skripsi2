@@ -1,4 +1,3 @@
-// types/stock.d.ts
 export interface Item {
   id: number;
   nama_barang: string;

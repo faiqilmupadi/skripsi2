@@ -1,10 +1,9 @@
-// lib/ambil.ts
 import { ItemCheckout, CheckoutPayload } from "@/types/ambil";
 
 const API_URL = "/api/items"; 
 const CHECKOUT_URL = "/api/checkout"; 
 
-// Ambil list barang untuk tabel
+
 export async function fetchItemsForCheckout(): Promise<ItemCheckout[]> {
   try {
     const res = await fetch(API_URL, { cache: "no-store" });
@@ -17,7 +16,6 @@ export async function fetchItemsForCheckout(): Promise<ItemCheckout[]> {
   }
 }
 
-// Kirim data checkout ke backend
 export async function processCheckoutItem(data: CheckoutPayload): Promise<boolean> {
   try {
     const res = await fetch(CHECKOUT_URL, {

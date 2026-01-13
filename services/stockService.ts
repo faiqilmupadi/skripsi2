@@ -1,4 +1,4 @@
-// services/stockService.ts
+
 import {
   Item,
   StockStatus,
@@ -13,9 +13,6 @@ import {
 } from "@/types/stock";
 import { STOCK_COLORS } from "@/lib/realtimeConstans";
 
-/**
- * Determine stock status based on business logic
- */
 export function getStockStatus(item: Item): StockStatus {
   if (item.stok_saat_ini > item.rop) {
     return "aman";
@@ -29,9 +26,6 @@ export function getStockStatus(item: Item): StockStatus {
   }
 }
 
-/**
- * Get color based on stock status
- */
 export function getStatusColor(status: StockStatus): string {
   const colorMap = {
     aman: STOCK_COLORS.AMAN,
@@ -41,9 +35,6 @@ export function getStatusColor(status: StockStatus): string {
   return colorMap[status];
 }
 
-/**
- * Add status and color to stock items
- */
 export function enrichStockItems(items: Item[]): ItemWithStatus[] {
   return items.map((item) => {
     const status = getStockStatus(item);
@@ -52,9 +43,6 @@ export function enrichStockItems(items: Item[]): ItemWithStatus[] {
   });
 }
 
-/**
- * Calculate distribution for pie chart
- */
 export function calculateDistribution(
   items: ItemWithStatus[]
 ): StockDistribution[] {
@@ -75,9 +63,6 @@ export function calculateDistribution(
   ];
 }
 
-/**
- * Calculate summary statistics
- */
 export function calculateSummary(items: ItemWithStatus[]): StockSummary {
   const counts = {
     stokAman: 0,
@@ -95,9 +80,6 @@ export function calculateSummary(items: ItemWithStatus[]): StockSummary {
   return counts;
 }
 
-/**
- * Generate trend data from current data (Logic Simulasi)
- */
 export function generateTrendFromCurrentData(
   items: ItemWithStatus[],
   filter: TimeFilter
@@ -151,17 +133,11 @@ export function generateTrendFromCurrentData(
   return trendData;
 }
 
-/**
- * Generate notifications based on stock status and FSN category
- */export function generateNotifications(items: ItemComplete[]): Notification[] {
+ export function generateNotifications(items: ItemComplete[]): Notification[] {
   const notifications: Notification[] = [];
 
   items.forEach((item) => {
-    // HANYA PROSES JIKA MENIPIS ATAU KRITIS (Aman tidak perlu notif)
     if (item.status === "aman") return;
-
-    // ✅ ID UNIK: Gabungan ID Barang + Status. 
-    // Jadi kalau status berubah dari menipis ke kritis, ID berubah -> Dianggap notif baru.
     const uniqueId = `notif-${item.id}-${item.status}`;
 
     // 1. FAST MOVING

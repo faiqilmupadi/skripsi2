@@ -1,13 +1,9 @@
-// lib/stock.ts
 
-import { ItemWithStatus } from "@/types/stock"; // Pastikan path ini sesuai
+import { ItemWithStatus } from "@/types/stock"; 
 
-const API_URL = "/api/items"; // Relative path untuk API items
-
-// ================= GET (READ) =================
+const API_URL = "/api/items";
 export async function fetchStockItems(): Promise<ItemWithStatus[]> {
   try {
-    // Gunakan no-store agar data selalu fresh (tidak dicache browser)
     const res = await fetch(API_URL, { cache: "no-store" });
 
     if (!res.ok) {
@@ -21,7 +17,6 @@ export async function fetchStockItems(): Promise<ItemWithStatus[]> {
   }
 }
 
-// ================= POST (CREATE) =================
 export async function createStockItem(data: {
   nama_barang: string;
   stok_saat_ini: number;
@@ -44,7 +39,6 @@ export async function createStockItem(data: {
   }
 }
 
-// ================= PUT (UPDATE) =================
 export async function updateStockItem(
   id: number,
   data: {
@@ -70,7 +64,6 @@ export async function updateStockItem(
   }
 }
 
-// ================= DELETE =================
 export async function deleteStockItem(id: number): Promise<boolean> {
   try {
     const res = await fetch(`${API_URL}/${id}`, {
@@ -85,9 +78,6 @@ export async function deleteStockItem(id: number): Promise<boolean> {
   }
 }
 
-// ================= NOTIFICATION LOGIC =================
-
-// Ambil list ID yang sudah ada di tabel notification
 export async function fetchNotifiedItemIds(): Promise<number[]> {
   try {
     const res = await fetch("/api/notification", { cache: "no-store" });
@@ -99,7 +89,6 @@ export async function fetchNotifiedItemIds(): Promise<number[]> {
   }
 }
 
-// Simpan ke tabel notification
 export async function saveNotificationDB(itemId: number, namaBarang: string): Promise<void> {
   try {
     const res = await fetch("/api/notification", {

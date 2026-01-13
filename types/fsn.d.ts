@@ -1,29 +1,26 @@
-// types/fsn.d.ts
-// ✅ DISESUAIKAN DENGAN DATABASE REAL
-
 export interface StockMovement {
-  id: number;                    // ✅ int di DB
-  item_id: number;               // ✅ int di DB (bukan string!)
-  user_id?: number;              // ✅ optional, ada di DB
-  tipe: "IN" | "OUT";            // ✅ enum di DB (sekarang hanya OUT, tapi bisa ditambah IN)
-  qty: number;                   // ✅ int di DB
-  tanggal: string;               // ✅ timestamp di DB
-  keterangan?: string;           // ✅ optional (tidak ada di DB tapi bisa ditambah)
+  id: number;
+  item_id: number;
+  user_id?: number;
+  tipe: "IN" | "OUT";
+  qty: number;
+  tanggal: string;
+  keterangan?: string;
 }
 
 export interface Item {
-  id: number;                    // ✅ int di DB (AUTO_INCREMENT)
-  nama_barang: string;           // ✅ varchar di DB
-  rop: number;                   // ✅ int di DB
-  safety_stock: number;          // ✅ int di DB
-  stok_saat_ini: number;         // ✅ int di DB
-  satuan: string;                // ✅ varchar di DB
-  created_at: string;            // ✅ timestamp di DB
-  updated_at: string;            // ✅ timestamp di DB
+  id: number;
+  nama_barang: string;
+  rop: number;
+  safety_stock: number;
+  stok_saat_ini: number;
+  satuan: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface User {
-  id: number;                    // ✅ int di DB
+  id: number;
   nama: string;
   username: string;
   password: string;

@@ -15,9 +15,8 @@ export const CHART_CONFIG = {
   LINE_STROKE_WIDTH: 2.5,
 } as const;
 
-// FSN Analysis Thresholds
 export const FSN_THRESHOLDS = {
-  FAST_MOVING: 10,  // >= 10 movements in period
-  SLOW_MOVING: 3,   // 3-9 movements in period
-  NON_MOVING: 3,    // < 3 movements in period
+  FAST_MOVING: 10,  
+  SLOW_MOVING: 3,   
+  NON_MOVING: 3,    
 } as const;
