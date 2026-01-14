@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { ChevronLeft, ChevronRight, LogOut, UserCircle } from "lucide-react";
 import SidebarButton from "./SidebarButton";
 import { MANAGER_MENU_ITEMS, MenuItem } from "./SidebarItems";
+import { jwtDecode } from "jwt-decode"; // ✅ IMPORT INI
 
 interface SidebarManagerProps {
   onSignOut?: () => void;
@@ -23,10 +24,16 @@ export default function SidebarManager({
   const SIDEBAR_WIDTH = isCollapsed ? "80px" : "260px";
 
   useEffect(() => {
-    const session = localStorage.getItem("user_session");
-    if (session) {
-      const user = JSON.parse(session);
-      if (user.name) setUserName(user.name);
+    // ✅ UPDATE: Ambil dari Token JWT
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decoded: any = jwtDecode(token);
+        // Pastikan properti 'name' sesuai dengan payload di route.ts login
+        if (decoded.name) setUserName(decoded.name);
+      } catch (error) {
+        console.error("Gagal decode token sidebar", error);
+      }
     }
   }, []);
 

@@ -84,3 +84,68 @@ export function CheckoutModal({ show, selectedItem, form, onChange, onSubmit, on
     </Transition>
   );
 }
+
+interface RestockModalProps {
+  show: boolean;
+  item: any | null;
+  form: { supplier: string; amount: string };
+  onChange: (field: string, value: string) => void;
+  onSubmit: () => void;
+  onClose: () => void;
+}
+
+export function RestockModal({ show, item, form, onChange, onSubmit, onClose }: RestockModalProps) {
+  if (!show || !item) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white p-6 rounded-xl w-96 shadow-xl animate-in fade-in zoom-in duration-200">
+        <h3 className="text-xl font-bold mb-4 text-gray-800">Request Restock</h3>
+        
+        {/* Info Barang (Auto Fill Reference) */}
+        <div className="bg-blue-50 p-3 rounded-lg mb-4 text-sm">
+            <p className="text-gray-500">Nama Barang:</p>
+            <p className="font-bold text-gray-800 text-lg">{item.nama_barang}</p>
+            <div className="flex gap-4 mt-2">
+                <div>
+                    <p className="text-gray-500 text-xs">Stok Saat Ini</p>
+                    <p className="font-bold">{item.stok_saat_ini} {item.satuan}</p>
+                </div>
+            </div>
+        </div>
+
+        <div className="space-y-3">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Supplier</label>
+            <input
+              type="text"
+              placeholder="Nama Supplier..."
+              className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"
+              value={form.supplier}
+              onChange={(e) => onChange("supplier", e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Jumlah Restock</label>
+            <input
+              type="number"
+              placeholder="0"
+              className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"
+              value={form.amount}
+              onChange={(e) => onChange("amount", e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="flex gap-2 mt-6">
+          <button onClick={onClose} className="flex-1 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">
+            Batal
+          </button>
+          <button onClick={onSubmit} className="flex-1 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">
+            Kirim Pesanan 📩
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

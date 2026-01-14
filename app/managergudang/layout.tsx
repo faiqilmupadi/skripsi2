@@ -13,7 +13,8 @@ export default function ManagerLayout({ children }: ManagerLayoutProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleSignOut = () => {
-    // Tambahkan logic logout
+    // ✅ UPDATE: Hapus token dari localStorage
+    localStorage.removeItem("token");
     router.push("/login");
   };
 

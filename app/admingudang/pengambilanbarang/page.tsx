@@ -2,106 +2,143 @@
 
 import { useState, useEffect } from "react";
 import { ItemCheckout } from "@/types/ambil";
-import { fetchItemsForCheckout, processCheckoutItem } from "@/lib/ambilAdmin";
-import StockTable from "./components/StockTable";
+import { jwtDecode } from "jwt-decode"; // ✅ IMPORT JWT DECODE
+
+// Service Admin
+import { fetchItemsForAdmin, sendCheckoutRequest } from "@/services/ambilAdminService";
+
+// Components
+import StockTable from "./components/StockTable"; 
 import { CheckoutModal } from "./components/StockModals";
 
-export default function CheckoutPage() {
+export default function AdminPage() {
   const [items, setItems] = useState<ItemCheckout[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // --- STATE USER AUTH (OTOMATIS) ---
+  const [currentUser, setCurrentUser] = useState({ id: 0, name: "", role: "" });
 
-  // State Modal Checkout
-  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  // UI State
   const [selectedItem, setSelectedItem] = useState<ItemCheckout | null>(null);
-  const [checkoutForm, setCheckoutForm] = useState({ requesterName: "", amount: "" });
+  const [showModal, setShowModal] = useState(false);
+  const [amount, setAmount] = useState("");
 
-  // Load Data Barang
-  async function loadData() {
-    setLoading(true);
-    const data = await fetchItemsForCheckout();
-    setItems(data);
-    setLoading(false);
-  }
-
+  // --- 1. LOAD USER DARI TOKEN & LOAD ITEMS ---
   useEffect(() => {
-    loadData();
+    async function initData() {
+      try {
+        setLoading(true);
+
+        // A. AMBIL TOKEN & DECODE USER
+        const token = localStorage.getItem("token"); // Sesuaikan nama key token Anda
+        if (token) {
+            try {
+                const decoded: any = jwtDecode(token);
+                // Sesuaikan field decoded dengan isi token Anda (misal: sub, id, username, nama)
+                setCurrentUser({
+                    id: decoded.id || decoded.sub, 
+                    name: decoded.name || decoded.username || decoded.nama, 
+                    role: decoded.role
+                });
+            } catch (err) {
+                console.error("Token invalid:", err);
+                // Opsional: Redirect ke login jika token rusak
+            }
+        } else {
+            console.warn("⚠️ Tidak ada token login ditemukan.");
+        }
+
+        // B. LOAD DATA BARANG
+        const dItems = await fetchItemsForAdmin();
+        setItems(dItems);
+
+      } catch (e) {
+        console.error("Gagal memuat data:", e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    initData();
   }, []);
 
-  // Handler Buka Modal
-  const handleCheckoutClick = (item: ItemCheckout) => {
-    setSelectedItem(item);
-    setCheckoutForm({ requesterName: "", amount: "" }); // Reset form
-    setShowCheckoutModal(true);
-  };
-
-  // Handler Submit Checkout
-  const handleSubmitCheckout = async () => {
+  // --- 2. HANDLER REQUEST ---
+  const handleRequest = async () => {
+    // Validasi User Login
+    if (currentUser.id === 0) {
+        alert("⚠️ Sesi Anda habis atau belum login. Silakan login ulang.");
+        return;
+    }
     if (!selectedItem) return;
-
-    // Validasi sederhana
-    const qty = parseInt(checkoutForm.amount);
-    if (!checkoutForm.requesterName || isNaN(qty) || qty <= 0) {
-      alert("Mohon isi Nama dan Jumlah dengan benar.");
-      return;
-    }
-
-    if (qty > selectedItem.stok_saat_ini) {
-      alert(`Stok tidak cukup! Hanya tersedia ${selectedItem.stok_saat_ini}`);
-      return;
-    }
-
+    
     try {
-      await processCheckoutItem({
+      await sendCheckoutRequest({
         itemId: selectedItem.id,
-        requesterName: checkoutForm.requesterName,
-        amount: qty
+        userId: currentUser.id,      // <--- AMBIL OTOMATIS DARI STATE
+        requesterName: currentUser.name, // <--- AMBIL OTOMATIS DARI STATE
+        amount: parseInt(amount)
       });
 
-      alert("✅ Checkout Berhasil!");
-      setShowCheckoutModal(false);
-      loadData(); // Refresh tabel agar stok berkurang
-    } catch (error: any) {
-      alert("❌ Gagal Checkout: " + error.message);
+      alert(`✅ Permintaan atas nama "${currentUser.name}" terkirim ke Manager!`);
+      setShowModal(false);
+    } catch (e: any) {
+      alert("❌ Error: " + e.message);
     }
+  };
+
+  const handleItemClick = (item: ItemCheckout) => {
+    setSelectedItem(item);
+    setAmount("");
+    setShowModal(true);
   };
 
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
-      {/* Header Filter (Visual Only sesuai screenshot) */}
-      <div className="flex gap-2 mb-8">
-        {["24H", "7D", "1M", "3M", "CUSTOM"].map((filter, index) => (
-          <button
-            key={filter}
-            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
-              index === 0
-                ? "bg-blue-500 text-white shadow-md"
-                : "bg-blue-100/50 text-blue-400 hover:bg-blue-100"
-            }`}
-          >
-            {filter}
-          </button>
-        ))}
+      <div className="flex justify-between items-center mb-6">
+        <div>
+           <h1 className="text-2xl font-bold text-gray-800">Request Pengambilan Barang</h1>
+           <p className="text-sm text-gray-500">Admin Gudang</p>
+        </div>
+        
+        {/* INFO USER LOGIN (OTOMATIS) */}
+        <div className="bg-white px-4 py-2 rounded-lg border flex items-center gap-3 shadow-sm">
+           <div className="text-right">
+             <p className="text-xs text-gray-400 font-bold uppercase">Pelaksana</p>
+             <p className={`font-bold text-sm ${currentUser.id !== 0 ? 'text-blue-600' : 'text-red-500'}`}>
+                {currentUser.id !== 0 ? currentUser.name : "Guest / Belum Login"}
+             </p>
+           </div>
+           <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+              {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : "?"}
+           </div>
+        </div>
       </div>
 
       {loading ? (
-        <div className="flex h-64 items-center justify-center">
-          <p className="text-gray-400 animate-pulse">Memuat Data Barang...</p>
+        <div className="flex h-64 items-center justify-center text-gray-500 animate-pulse">
+            Memuat Data Stok...
+        </div>
+      ) : items.length === 0 ? (
+        <div className="bg-white p-8 text-center text-gray-500 border rounded-lg">
+            Tidak ada barang ditemukan atau API error.
         </div>
       ) : (
-        <StockTable 
-          items={items} 
-          onCheckout={handleCheckoutClick} 
-        />
+        <StockTable items={items} onCheckout={handleItemClick} />
       )}
 
-      {/* Modal Checkout */}
-      <CheckoutModal
-        show={showCheckoutModal}
-        selectedItem={selectedItem}
-        form={checkoutForm}
-        onChange={(field, value) => setCheckoutForm({ ...checkoutForm, [field]: value })}
-        onSubmit={handleSubmitCheckout}
-        onClose={() => setShowCheckoutModal(false)}
+      {/* MODAL CHECKOUT */}
+      <CheckoutModal 
+         show={showModal}
+         selectedItem={selectedItem}
+         form={{ 
+            // Nama user otomatis muncul di form (Read Only)
+            requesterName: currentUser.name || "Guest", 
+            amount 
+         }}
+         onChange={(f, v) => setAmount(v)}
+         onSubmit={handleRequest}
+         onClose={() => setShowModal(false)}
+         title="Ajukan Pengambilan"
+         buttonLabel="Kirim Request"
       />
     </div>
   );

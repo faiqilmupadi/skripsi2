@@ -10,8 +10,6 @@ export async function GET() {
     const db = getDb();
     const sql = "SELECT * FROM items";
     const [rows] = await db.query(sql);
-    
-    // Proses data agar punya status (Aman/Kritis) & Warna
     const rawItems = rows as Item[];
     const processedItems = enrichStockItems(rawItems);
 
@@ -21,8 +19,6 @@ export async function GET() {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-
-// 2. POST: Tambah barang BARU
 export async function POST(request: Request) {
   try {
     const body = await request.json();

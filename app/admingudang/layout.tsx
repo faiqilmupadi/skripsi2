@@ -13,6 +13,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleSignOut = () => {
+    // ✅ UPDATE: Hapus token
+    localStorage.removeItem("token");
     router.push("/login");
   };
 
