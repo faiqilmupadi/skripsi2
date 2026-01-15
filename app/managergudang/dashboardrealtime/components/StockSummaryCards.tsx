@@ -1,53 +1,24 @@
 "use client";
-
 import React from "react";
 import { StockSummary } from "@/types/realtime";
 import { Card } from "@/components/ui/Card";
-import { FaBox, FaExclamationTriangle, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 
-interface StockSummaryCardsProps {
-  data: StockSummary;
-}
-
-export function StockSummaryCards({ data }: StockSummaryCardsProps) {
-  const cards = [
-    { 
-      label: "Total Item", 
-      value: data.totalStok, 
-      icon: <FaBox className="text-blue-500" />, 
-      bg: "bg-blue-50" 
-    },
-    { 
-      label: "Stok Aman", 
-      value: data.stokAman, 
-      icon: <FaCheckCircle className="text-green-500" />, 
-      bg: "bg-green-50" 
-    },
-    { 
-      label: "Perlu Perhatian", 
-      value: data.stokMenipis, 
-      icon: <FaExclamationTriangle className="text-yellow-500" />, 
-      bg: "bg-yellow-50" 
-    },
-    { 
-      label: "Kritis / Kosong", 
-      value: data.stokKritis, 
-      icon: <FaTimesCircle className="text-red-500" />, 
-      bg: "bg-red-50" 
-    },
+export function StockSummaryCards({ data }: { data: StockSummary }) {
+  // Desain Simple Metrics
+  const items = [
+    { label: "Total SKU", val: data.totalStok, color: "text-gray-800", sub: "Item terdaftar" },
+    { label: "Siap Distribusi", val: data.stokAman, color: "text-emerald-600", sub: "Stok Aman" },
+    { label: "Perlu Perhatian", val: data.stokMenipis, color: "text-amber-600", sub: "> Safety Stock" },
+    { label: "Kritis", val: data.stokKritis, color: "text-rose-600", sub: "< Safety Stock" },
   ];
 
   return (
-    <div className="grid grid-cols-4 gap-4 mb-6">
-      {cards.map((item, idx) => (
-        <Card key={idx} className="flex items-center p-4 border-none shadow-sm">
-          <div className={`p-3 rounded-full mr-4 ${item.bg} text-xl`}>
-            {item.icon}
-          </div>
-          <div>
-            <p className="text-sm text-gray-500 font-medium">{item.label}</p>
-            <h3 className="text-2xl font-bold text-gray-800">{item.value}</h3>
-          </div>
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {items.map((item, i) => (
+        <Card key={i} className="p-4 bg-white border border-gray-100 shadow-none rounded-lg flex flex-col justify-center">
+            <span className="text-[10px] uppercase font-semibold text-gray-400 tracking-wider">{item.label}</span>
+            <div className={`text-2xl font-bold mt-1 mb-1 ${item.color}`}>{item.val}</div>
+            <span className="text-[10px] text-gray-400">{item.sub}</span>
         </Card>
       ))}
     </div>
