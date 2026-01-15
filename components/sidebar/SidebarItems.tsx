@@ -59,9 +59,9 @@ export const MANAGER_MENU_ITEMS: MenuItem[] = [
     href: `${BASE_PATH}/managergudang/pengambilanbarang`,
   },
   {
-    id: "laporanmingguan",
-    label: "Laporan Mingguan",
+    id: "laporanbarang",
+    label: "Laporan Barang",
     icon: BookOpen,
-    href: `${BASE_PATH}/managergudang/laporanmingguan`,
+    href: `${BASE_PATH}/managergudang/laporanbarang`,
   },
 ];
