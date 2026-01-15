@@ -1,15 +1,18 @@
 import { getDb } from "@/lib/db";
 import { NextResponse } from "next/server";
-// Pastikan path import ini sesuai dengan struktur folder kamu
 import { enrichStockItems } from "@/services/realtimeService"; 
 import { Item } from "@/types/realtime"; 
 
-// 1. GET: Ambil SEMUA data items
+// PENTING: Mencegah caching agar stok selalu update real-time
+export const dynamic = 'force-dynamic';
+
+// 1. GET: Ambil SEMUA data items 
 export async function GET() {
   try {
     const db = getDb();
-    const sql = "SELECT * FROM items";
+    const sql = "SELECT * FROM items ORDER BY nama_barang ASC"; // Tambah sorting biar rapi
     const [rows] = await db.query(sql);
+    
     const rawItems = rows as Item[];
     const processedItems = enrichStockItems(rawItems);
 
@@ -19,6 +22,8 @@ export async function GET() {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+// 2. POST: Tambah Item Baru
 export async function POST(request: Request) {
   try {
     const body = await request.json();

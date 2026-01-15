@@ -11,49 +11,40 @@ export interface StockMovement {
 export interface Item {
   id: number;
   nama_barang: string;
-  rop: number;
-  safety_stock: number;
   stok_saat_ini: number;
   satuan: string;
+  rop: number;
+  safety_stock: number;
   created_at: string;
-  updated_at: string;
-}
-
-export interface User {
-  id: number;
-  nama: string;
-  username: string;
-  password: string;
-  role: "admin_gudang" | "manajer_gudang";
+  updated_at?: string;
 }
 
 export type FSNCategory = "fast" | "slow" | "non";
 
 export interface ItemWithFSN extends Item {
   category: FSNCategory;
-  color: string;
-  totalMovement: number;
-  turnoverRate: number;
+  totalOutFreq: number;
+  totalOutQty: number;
+  lastOutDate: string | null;
+  daysSinceLastOut: number;
+  contribution: number; 
+  [key: string]: any; 
 }
 
-export interface FSNDistribution {
-  name: string;
-  value: number;
-  color: string;
-}
-
-export interface FSNTrend {
-  date: string;
+// PERBAIKAN DI SINI (Ganti 'total' jadi 'totalItems')
+export interface FSNSummary {
   fast: number;
   slow: number;
   non: number;
+  totalItems: number; // <--- Ganti nama ini
+  totalTransactions: number;
 }
 
-export interface FSNSummary {
-  fastMoving: number;
-  slowMoving: number;
-  nonMoving: number;
-  totalItems: number;
+export interface FSNChartData {
+  name: string;
+  value: number;
+  color: string;
+  [key: string]: any; 
 }
 
-export type TimeFilter = "24H" | "7D" | "1M" | "3M" | "CUSTOM";
+export type TimeFilter = "1M" | "3M" | "6M";
