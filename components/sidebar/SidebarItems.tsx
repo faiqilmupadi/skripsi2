@@ -64,4 +64,10 @@ export const MANAGER_MENU_ITEMS: MenuItem[] = [
     icon: BookOpen,
     href: `${BASE_PATH}/managergudang/laporanbarang`,
   },
+    {
+    id: "ManagementUser",
+    label: "Management User",
+    icon: Users,
+    href: `${BASE_PATH}/managergudang/managementuser`,
+  },
 ];

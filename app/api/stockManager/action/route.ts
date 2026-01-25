@@ -64,7 +64,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "Aksi tidak dikenal" }, { status: 400 });
 
   } catch (e: any) {
-    // Tetap simpan console.error agar jika ada error server, masih bisa dicek di log
     console.error("Error processing request:", e);
     return NextResponse.json({ error: e.message }, { status: 500 });
   }

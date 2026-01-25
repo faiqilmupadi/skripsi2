@@ -1,11 +1,9 @@
-import { StockRequest, ManagerActionPayload } from "@/types/stockManager"; // Sesuaikan path types
-// Jika path types anda di stockManager.ts ganti import di atas.
+import { StockRequest, ManagerActionPayload } from "@/types/stockManager"; 
 
-const BASE_URL = "/api/stockManager"; // Base URL biar rapi
+const BASE_URL = "/api/stockManager";
 
 // Ambil Request Pending
 export async function fetchPendingRequests(): Promise<StockRequest[]> {
-  // URL ini harus sama persis dengan nama folder di step 1
   const res = await fetch(`${BASE_URL}/requests`, { cache: "no-store" });
   if (!res.ok) return [];
   return res.json();
@@ -24,7 +22,7 @@ export async function processManagerAction(payload: ManagerActionPayload) {
 
 // Update Barang (Edit)
 export async function updateItemManager(id: number, data: any) {
-  // Pastikan route ini ada di /api/items/[id]/route.ts atau sejenisnya
+  // Pastikan route ini sesuai dengan API update barang kamu
   const res = await fetch(`/api/items/${id}`, { 
     method: "PUT",
     headers: { "Content-Type": "application/json" },
